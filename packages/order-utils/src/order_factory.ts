@@ -1,7 +1,6 @@
-import { ECSignature, SignedOrder } from '@0xproject/types';
+import { SignedOrder } from '@0xproject/types';
 import { BigNumber } from '@0xproject/utils';
 import { Provider } from 'ethereum-types';
-import * as ethUtil from 'ethereumjs-util';
 import * as _ from 'lodash';
 
 import { orderHashUtils } from './order_hash';
@@ -49,22 +48,8 @@ export const orderFactory = {
             prefixType: MessagePrefixType.EthSign,
             shouldAddPrefixBeforeCallingEthSign: false,
         };
-        const ecSignature = await ecSignOrderHashAsync(provider, orderHash, makerAddress, messagePrefixOpts);
-        const signature = getVRSHexString(ecSignature);
+        const signature = await ecSignOrderHashAsync(provider, orderHash, makerAddress, messagePrefixOpts);
         const signedOrder: SignedOrder = _.assign(order, { signature });
         return signedOrder;
     },
 };
-
-function getVRSHexString(ecSignature: ECSignature): string {
-    const ETH_SIGN_SIGNATURE_TYPE = '03';
-    const vrs = `${intToHex(ecSignature.v)}${ethUtil.stripHexPrefix(ecSignature.r)}${ethUtil.stripHexPrefix(
-        ecSignature.s,
-    )}${ETH_SIGN_SIGNATURE_TYPE}`;
-    return vrs;
-}
-
-function intToHex(i: number): string {
-    const hex = ethUtil.bufferToHex(ethUtil.toBuffer(i));
-    return hex;
-}

@@ -118,27 +118,21 @@ describe('Signature utils', () => {
             _.each(stubs, s => s.restore());
             stubs = [];
         });
-        it('Should return the correct ECSignature', async () => {
+        it('Should return the correct Signature', async () => {
             const orderHash = '0x6927e990021d23b1eb7b8789f6a6feaf98fe104bb0cf8259421b79f9a34222b0';
-            const expectedECSignature = {
-                v: 27,
-                r: '0x61a3ed31b43c8780e905a260a35faefcc527be7516aa11c0256729b5b351bc33',
-                s: '0x40349190569279751135161d22529dc25add4f6069af05be04cacbda2ace2254',
-            };
+            const expectedSignature =
+                '0x1b61a3ed31b43c8780e905a260a35faefcc527be7516aa11c0256729b5b351bc3340349190569279751135161d22529dc25add4f6069af05be04cacbda2ace225403';
             const messagePrefixOpts = {
                 prefixType: MessagePrefixType.EthSign,
                 shouldAddPrefixBeforeCallingEthSign: false,
             };
             const ecSignature = await ecSignOrderHashAsync(provider, orderHash, makerAddress, messagePrefixOpts);
-            expect(ecSignature).to.deep.equal(expectedECSignature);
+            expect(ecSignature).to.equal(expectedSignature);
         });
-        it('should return the correct ECSignature for signatureHex concatenated as R + S + V', async () => {
+        it('should return the correct Signature for signatureHex concatenated as R + S + V', async () => {
             const orderHash = '0x34decbedc118904df65f379a175bb39ca18209d6ce41d5ed549d54e6e0a95004';
-            const expectedECSignature = {
-                v: 27,
-                r: '0x117902c86dfb95fe0d1badd983ee166ad259b27acb220174cbb4460d87287113',
-                s: '0x7feabdfe76e05924b484789f79af4ee7fa29ec006cedce1bbf369320d034e10b',
-            };
+            const expectedSignature =
+                '0x1b117902c86dfb95fe0d1badd983ee166ad259b27acb220174cbb4460d872871137feabdfe76e05924b484789f79af4ee7fa29ec006cedce1bbf369320d034e10b03';
 
             const fakeProvider = {
                 async sendAsync(payload: JSONRPCRequestPayload, callback: JSONRPCErrorCallback): Promise<void> {
@@ -163,15 +157,12 @@ describe('Signature utils', () => {
                 shouldAddPrefixBeforeCallingEthSign: false,
             };
             const ecSignature = await ecSignOrderHashAsync(fakeProvider, orderHash, makerAddress, messagePrefixOpts);
-            expect(ecSignature).to.deep.equal(expectedECSignature);
+            expect(ecSignature).to.equal(expectedSignature);
         });
-        it('should return the correct ECSignature for signatureHex concatenated as V + R + S', async () => {
+        it('should return the correct Signature for signatureHex concatenated as V + R + S', async () => {
             const orderHash = '0x34decbedc118904df65f379a175bb39ca18209d6ce41d5ed549d54e6e0a95004';
-            const expectedECSignature = {
-                v: 27,
-                r: '0x117902c86dfb95fe0d1badd983ee166ad259b27acb220174cbb4460d87287113',
-                s: '0x7feabdfe76e05924b484789f79af4ee7fa29ec006cedce1bbf369320d034e10b',
-            };
+            const expectedSignature =
+                '0x1b117902c86dfb95fe0d1badd983ee166ad259b27acb220174cbb4460d872871137feabdfe76e05924b484789f79af4ee7fa29ec006cedce1bbf369320d034e10b03';
             const fakeProvider = {
                 async sendAsync(payload: JSONRPCRequestPayload, callback: JSONRPCErrorCallback): Promise<void> {
                     if (payload.method === 'eth_sign') {
@@ -193,7 +184,7 @@ describe('Signature utils', () => {
                 shouldAddPrefixBeforeCallingEthSign: false,
             };
             const ecSignature = await ecSignOrderHashAsync(fakeProvider, orderHash, makerAddress, messagePrefixOpts);
-            expect(ecSignature).to.deep.equal(expectedECSignature);
+            expect(ecSignature).to.equal(expectedSignature);
         });
     });
 });
